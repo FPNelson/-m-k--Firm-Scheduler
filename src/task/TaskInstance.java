@@ -12,6 +12,11 @@ public class TaskInstance {
 	private int a;
 	
 	/**
+	 * Instance Number modifier (for cases where 2 tasks are both optional in schedule)
+	 */
+	private int a2;
+	
+	/**
 	 * Priority
 	 */
 	private int p;
@@ -57,11 +62,25 @@ public class TaskInstance {
 	 * @param r - Ready Time
 	 */
 	public TaskInstance(Task parent, int a, int pm, int po, int r) {
+		this(parent, a, 0, pm, po, r);
+	}
+	
+	/**
+	 * Create a new task instance of a task with priority determined by (m, k)-Firm scheduling.
+	 * @param parent - Parent Task
+	 * @param a - Instance Number
+	 * @param a2 - Modifier for Instance Number
+	 * @param pm - Mandatory Priority
+	 * @param po - Optional Priority
+	 * @param r - Ready Time
+	 */
+	public TaskInstance(Task parent, int a, int a2, int pm, int po, int r) {
 		this.parent = parent;
 		this.a = a;
+		this.a2 = a2;
 		this.setMandatory();
 		this.p = isMandatory ? pm : po;
-		this.d = parent.getP() * (this.a + 1);
+		this.d = parent.getP() * (a + 1);
 		this.t = parent.getC();
 		this.r = r;
 	}
@@ -81,7 +100,7 @@ public class TaskInstance {
 	public void setParent(Task parent) {
 		this.parent = parent;
 		this.setMandatory();
-		this.d = parent.getP() * (this.a + 1);
+		this.d = parent.getP() * (a + 1);
 		this.t = parent.getC();
 	}
 	
@@ -100,7 +119,23 @@ public class TaskInstance {
 	public void setA(int a) {
 		this.a = a;
 		this.setMandatory();
-		this.d = parent.getP() * (this.a + 1);
+		this.d = parent.getP() * (a + 1);
+	}
+	
+	/**
+	 * Get the instance number modifier of this task instance.
+	 * @return Value of instance number modifier
+	 */
+	public int getA2() {
+		return a2;
+	}
+	
+	/**
+	 * Set the instance number modifier of this task instance.
+	 * @param a2 value of new instance number modifier
+	 */
+	public void setA2(int a2) {
+		this.a2 = a2;
 	}
 	
 	/**
@@ -188,7 +223,7 @@ public class TaskInstance {
 	 * Check if this instance of the task is mandatory, then set the 'isMandatory' variable to the result.
 	 */
 	private void setMandatory() {
-		this.isMandatory = a == (int)Math.floor(Math.ceil((double)(a * parent.getM()) / parent.getK()) * ((double)parent.getK() / parent.getM()));
+		this.isMandatory = (a + a2) == (int)Math.floor(Math.ceil((double)((a + a2) * parent.getM()) / parent.getK()) * ((double)parent.getK() / parent.getM()));
 	}
 	
 	/**

@@ -13,6 +13,7 @@ public class Test {
 		List<Task> list = new ArrayList<Task>();
 		list.add(new Task("R1", 3, 6, 2, 3));
 		list.add(new Task("R2", 4, 7, 2, 3));
+		list.add(new Task("R3", 1, 8, 2, 3));
 		Scheduler.createSchedule(list, new TaskComparator(), new TaskInstanceComparator());
 	}
 }

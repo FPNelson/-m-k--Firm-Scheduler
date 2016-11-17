@@ -33,7 +33,14 @@ public class Scheduler {
 		for(int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
 			
-			taskInstances.add(new TaskInstance(task, 0, i, i + 1 + tasks.size(), 0));
+			int a2 = 0;
+			for(int j = 0; j < i; j++) {
+				if(task.getM() == tasks.get(j).getM() && task.getK() == tasks.get(j).getK()) {
+					a2 += task.getM();
+				}
+			}
+			
+			taskInstances.add(new TaskInstance(task, 0, a2, i, 1 + tasks.size(), 0));
 			periods[i] = task.getP();
 		}
 		
@@ -58,10 +65,10 @@ public class Scheduler {
 					}
 					
 					if(taskInstance.getT() < 1) {
-						taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, i, i + 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
+						taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
 					}
 					
-					System.out.println("Time: " + curTime + ", Task: " + taskInstance.getParent().getName());
+					System.out.println("Time: " + curTime + ", Task: " + taskInstance.getParent().getName() + ", Instance: " + taskInstance.getA());
 				}
 			}
 			if(curTimeUsed == false) {
@@ -86,8 +93,8 @@ public class Scheduler {
 					missDeadline = true;
 				}
 				
-				System.out.println("Deadline Missed - Time: " + (curTime + 1) + ", Task: " + taskInstance.getParent().getName());
-				taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, i, i + 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
+				System.out.println("Deadline Missed - Time: " + (curTime + 1) + ", Task: " + taskInstance.getParent().getName() + ", Instance: " + taskInstance.getA() + ", Mandatory: " + taskInstance.isMandatory());
+				taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
 				
 				i--;
 				continue;
