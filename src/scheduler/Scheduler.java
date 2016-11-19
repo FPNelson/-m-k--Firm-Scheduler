@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.jfree.data.gantt.TaskSeriesCollection;
+
 import task.Task;
 import task.TaskInstance;
 
@@ -14,13 +16,9 @@ public class Scheduler {
 	 * @param tasks - List of tasks which need to be scheduled
 	 * @param taskComparator - Scheduling algorithm used on the base tasks [RMS]
 	 * @param taskInstanceComparator - Scheduling algorithm used on the task instances [(m, k)-Firm]
+	 * @return
 	 */
-	public static void createSchedule(List<Task> tasks, Comparator<Task> taskComparator, Comparator<TaskInstance> taskInstanceComparator) {
-		if(tasks.isEmpty()) {
-			return;
-		}
-		
-		boolean curTimeUsed = false;
+	public static TaskSeriesCollection createSchedule(List<Task> tasks, Comparator<Task> taskComparator, Comparator<TaskInstance> taskInstanceComparator) {
 		boolean schedulingFailed = false;
 		
 		List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
@@ -28,7 +26,6 @@ public class Scheduler {
 		Collections.sort(tasks, taskComparator);
 		
 		long[] periods = new long[tasks.size()];
-		long lcm = 0;
 		
 		for(int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
@@ -44,13 +41,11 @@ public class Scheduler {
 			periods[i] = task.getP();
 		}
 		
-		lcm = SchedulerUtils.lcm(periods) - 1;
+		long lcm = SchedulerUtils.lcm(periods) - 1;
 		
 		int curTime = 0;
 		
-		while(curTime <= lcm) {
-			curTimeUsed = false;
-			
+		for(boolean curTimeUsed = false; curTime <= lcm; curTimeUsed = false) {
 			schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime);
 			
 			Collections.sort(taskInstances, taskInstanceComparator);
@@ -75,6 +70,8 @@ public class Scheduler {
 				curTime++;
 			}
 		}
+		
+		return null; // placeholder
 	}
 	
 	/**

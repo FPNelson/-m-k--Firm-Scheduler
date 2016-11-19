@@ -2,6 +2,8 @@ package scheduler;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import task.Task;
@@ -70,5 +72,11 @@ public class SchedulerUtils {
 		}
 		
 		return mkLoad <= tasks.size() * (Math.pow(2, 1d / tasks.size()) - 1);
+	}
+	
+	public static Date dateYear(final int year) {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.set(year, 01, 01, 01, 0, 0);
+		return calendar.getTime();
 	}
 }
