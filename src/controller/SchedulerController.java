@@ -39,12 +39,6 @@ public class SchedulerController {
 					Integer.parseInt(this.view.fields[2].getText()),
 					Integer.parseInt(this.view.fields[3].getText()),
 					Integer.parseInt(this.view.fields[4].getText())));
-			
-			this.view.fields[0].setText("");
-			this.view.fields[1].setText("");
-			this.view.fields[2].setText("");
-			this.view.fields[3].setText("");
-			this.view.fields[4].setText("");
 		}
 		catch(Exception e) {
 			JOptionPane.showMessageDialog(this.view.getContentPane(), "Please fill out all fields", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -75,12 +69,6 @@ public class SchedulerController {
 						Integer.parseInt(this.view.fields[2].getText()),
 						Integer.parseInt(this.view.fields[3].getText()),
 						Integer.parseInt(this.view.fields[4].getText())));
-				
-				this.view.fields[0].setText("");
-				this.view.fields[1].setText("");
-				this.view.fields[2].setText("");
-				this.view.fields[3].setText("");
-				this.view.fields[4].setText("");
 			}
 			catch(Exception e) {
 				JOptionPane.showMessageDialog(this.view.getContentPane(), "Please fill out all fields", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -111,6 +99,8 @@ public class SchedulerController {
 		if(this.tasks.size() > 0) {
 			this.view.chartDataset = Scheduler.createSchedule(this.tasks, new TaskComparator(), new TaskInstanceComparator());
 		}
+		
+		this.view.refreshChartPanel();
 	}
 	
 	/**

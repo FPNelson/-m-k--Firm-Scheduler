@@ -167,4 +167,11 @@ public class Task {
 		
 		this.k = k;
 	}
+	
+	/**
+	 * Returns a string with the format 'name = { c, p, m, k }'.
+	 */
+	public String toString() {
+		return name + " = { " + c + ", " + p + ", " + m + ", " + k + " }";
+	}
 }

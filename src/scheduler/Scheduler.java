@@ -3,8 +3,11 @@ package scheduler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 
 import task.Task;
@@ -19,6 +22,11 @@ public class Scheduler {
 	 * @return
 	 */
 	public static TaskSeriesCollection createSchedule(List<Task> tasks, Comparator<Task> taskComparator, Comparator<TaskInstance> taskInstanceComparator) {
+		Map<String, org.jfree.data.gantt.Task> taskMap = new HashMap<String, org.jfree.data.gantt.Task>();
+		
+		int curTaskStartTime = 0;
+		TaskInstance curTaskInstance = null;
+		
 		boolean schedulingFailed = false;
 		
 		List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
@@ -43,6 +51,10 @@ public class Scheduler {
 		
 		long lcm = SchedulerUtils.lcm(periods) - 1;
 		
+		for(int i = 0; i < tasks.size(); i++) {
+			taskMap.put(tasks.get(i).getName(), SchedulerUtils.createTask(tasks.get(i).getName(), 1, (int)lcm+1));
+		}
+		
 		int curTime = 0;
 		
 		for(boolean curTimeUsed = false; curTime <= lcm; curTimeUsed = false) {
@@ -54,13 +66,24 @@ public class Scheduler {
 				TaskInstance taskInstance = taskInstances.get(i);
 				
 				if(taskInstance.getR() <= curTime) {
+					if(!taskInstance.equals(curTaskInstance)) {
+						if(curTaskInstance != null) {
+							taskMap.get(curTaskInstance.getParent().getName()).addSubtask(SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime, curTime+1));
+						}
+						
+						curTaskStartTime = curTime + 1;
+						curTaskInstance = taskInstance;
+					}
+					
 					if(taskInstance.doComputation(curTime, curTime + 1)) {
 						curTimeUsed = true;
 						curTime++;
 					}
 					
 					if(taskInstance.getT() < 1) {
+						taskMap.get(curTaskInstance.getParent().getName()).addSubtask(SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime, curTime+1));
 						taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
+						curTaskInstance = null;
 					}
 					
 					System.out.println("Time: " + curTime + ", Task: " + taskInstance.getParent().getName() + ", Instance: " + taskInstance.getA());
@@ -71,7 +94,23 @@ public class Scheduler {
 			}
 		}
 		
-		return null; // placeholder
+		TaskSeriesCollection taskCollection = new TaskSeriesCollection();
+		TaskSeries taskSeries = new TaskSeries("Scheduled Tasks");
+		
+		schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime);
+		
+		for(String task : taskMap.keySet()) {
+			if(taskMap.get(task).getSubtaskCount() > 0) {
+				taskSeries.add(taskMap.get(task));
+			}
+			else {
+				taskSeries.add(SchedulerUtils.createTask(task, 1, 1));
+			}
+		}
+		
+		taskCollection.add(taskSeries);
+		
+		return taskCollection;
 	}
 	
 	/**

@@ -94,6 +94,12 @@ public class View extends JFrame {
 		this.tabbedPane.add("(m, k)-RMS Schedule", this.ganttPane);
 		
 		refreshChartPanel();
+		
+		this.controller = new SchedulerController(this);
+		
+		setContentPane(this.tabbedPane);
+		
+		this.tabbedPane.setSelectedIndex(0);
 	}
 	
 	/**
@@ -123,9 +129,11 @@ public class View extends JFrame {
 		this.taskList.setVisibleRowCount(-1);
 		this.taskList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				String[] vals = taskList.getSelectedValue().split("\\s(?:=\\s\\{\\s|\\})|,\\s");
-				for(int i = 0; i < fields.length; i++) {
-					fields[i].setText(vals[i]);
+				if(!taskList.isSelectionEmpty()) {
+					String[] vals = taskList.getSelectedValue().split("\\s(?:=\\s\\{\\s|\\})|,\\s");
+					for(int i = 0; i < fields.length; i++) {
+						fields[i].setText(vals[i]);
+					}
 				}
 			}
 		});
