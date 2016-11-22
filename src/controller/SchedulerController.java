@@ -26,6 +26,10 @@ public class SchedulerController {
 	public void addTask() {
 		try {
 			String name = this.view.fields[0].getText();
+			int c = Integer.parseInt(this.view.fields[1].getText());
+			int p = Integer.parseInt(this.view.fields[2].getText());
+			int m = Integer.parseInt(this.view.fields[3].getText());
+			int k = Integer.parseInt(this.view.fields[4].getText());
 			
 			for(Task task : tasks) {
 				if(name.equals(task.getName())) {
@@ -34,13 +38,9 @@ public class SchedulerController {
 				}
 			}
 			
-			tasks.add(new Task(name,
-					Integer.parseInt(this.view.fields[1].getText()),
-					Integer.parseInt(this.view.fields[2].getText()),
-					Integer.parseInt(this.view.fields[3].getText()),
-					Integer.parseInt(this.view.fields[4].getText())));
+			tasks.add(new Task(name, c, p, m, k));
 		}
-		catch(Exception e) {
+		catch(NumberFormatException e) {
 			JOptionPane.showMessageDialog(this.view.getContentPane(), "Please fill out all fields", "Input Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -53,6 +53,10 @@ public class SchedulerController {
 		if(selectedIndex >= 0) {
 			try {
 				String name = this.view.fields[0].getText();
+				int c = Integer.parseInt(this.view.fields[1].getText());
+				int p = Integer.parseInt(this.view.fields[2].getText());
+				int m = Integer.parseInt(this.view.fields[3].getText());
+				int k = Integer.parseInt(this.view.fields[4].getText());
 				
 				Task tempTask = tasks.remove(selectedIndex);
 				
@@ -64,13 +68,9 @@ public class SchedulerController {
 					}
 				}
 				
-				tasks.add(new Task(name,
-						Integer.parseInt(this.view.fields[1].getText()),
-						Integer.parseInt(this.view.fields[2].getText()),
-						Integer.parseInt(this.view.fields[3].getText()),
-						Integer.parseInt(this.view.fields[4].getText())));
+				tasks.add(new Task(name, c, p, m, k));
 			}
-			catch(Exception e) {
+			catch(NumberFormatException e) {
 				JOptionPane.showMessageDialog(this.view.getContentPane(), "Please fill out all fields", "Input Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}

@@ -81,8 +81,8 @@ public class View extends JFrame {
 		super("(m, k)-RMS Simulator");
 		setSize(800, 500);
 		
-		this.taskEditPanel = getTaskEditPanel();
 		this.taskListPanel = getTaskListPanel();
+		this.taskEditPanel = getTaskEditPanel();
 		
 		this.taskSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.taskEditPanel, this.taskListPanel);
 		this.tabbedPane.add("Task Editor", this.taskSplitPane);
@@ -92,6 +92,8 @@ public class View extends JFrame {
 		this.ganttPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.chartPanel, this.scrollPane);
 		
 		this.tabbedPane.add("(m, k)-RMS Schedule", this.ganttPane);
+		
+		this.tabbedPane.setEnabledAt(1, false);
 		
 		refreshChartPanel();
 		
@@ -199,6 +201,20 @@ public class View extends JFrame {
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
 		
+		// Schedule Button
+		final JButton scheduleButton = new JButton("Create Schedule");
+		scheduleButton.setVerticalTextPosition(AbstractButton.BOTTOM);
+		scheduleButton.setHorizontalTextPosition(AbstractButton.CENTER);
+		scheduleButton.setSize(new Dimension(200, 30));
+		scheduleButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		scheduleButton.setEnabled(taskListModel.getSize() > 0);
+		scheduleButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tabbedPane.setEnabledAt(1, true);
+				controller.scheduleTasks();
+			}
+		});
+		
 		// Add Button
 		JButton addButton = new JButton("Add Task");
 		addButton.setVerticalTextPosition(AbstractButton.BOTTOM);
@@ -209,10 +225,9 @@ public class View extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				controller.addTask();
 				controller.refreshTasks();
+				scheduleButton.setEnabled(taskListModel.getSize() > 0);
 			}
 		});
-		buttons.add(addButton);
-		buttons.add(Box.createRigidArea(new Dimension(0, 10)));
 		
 		// Edit Button
 		JButton editButton = new JButton("Edit Task");
@@ -226,8 +241,6 @@ public class View extends JFrame {
 				controller.refreshTasks();
 			}
 		});
-		buttons.add(editButton);
-		buttons.add(Box.createRigidArea(new Dimension(0, 10)));
 		
 		// Delete Button
 		JButton deleteButton = new JButton("Delete Task");
@@ -239,22 +252,19 @@ public class View extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				controller.deleteTask();
 				controller.refreshTasks();
+				scheduleButton.setEnabled(taskListModel.getSize() > 0);
 			}
 		});
+		
+		buttons.add(addButton);
+		buttons.add(Box.createRigidArea(new Dimension(0, 10)));
+		
+		buttons.add(editButton);
+		buttons.add(Box.createRigidArea(new Dimension(0, 10)));
+		
 		buttons.add(deleteButton);
 		buttons.add(Box.createRigidArea(new Dimension(0, 10)));
 		
-		// Schedule Button
-		JButton scheduleButton = new JButton("Create Schedule");
-		scheduleButton.setVerticalTextPosition(AbstractButton.BOTTOM);
-		scheduleButton.setHorizontalTextPosition(AbstractButton.CENTER);
-		scheduleButton.setSize(new Dimension(200, 30));
-		scheduleButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		scheduleButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.scheduleTasks();
-			}
-		});
 		buttons.add(scheduleButton);
 		buttons.add(Box.createRigidArea(new Dimension(0, 10)));
 		
