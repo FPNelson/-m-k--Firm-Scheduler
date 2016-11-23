@@ -29,17 +29,17 @@ public class SchedulerUtils {
 	 * @return A Gantt chart task object for the name, start time, and end time
 	 */
 	public static org.jfree.data.gantt.Task createTask(String name, int start, int end) {
-		return new org.jfree.data.gantt.Task(name, SchedulerUtils.dateYear(start), SchedulerUtils.dateYear(end));
+		return new org.jfree.data.gantt.Task(name, SchedulerUtils.dateTime(start), SchedulerUtils.dateTime(end));
 	}
 	
 	/**
-	 * Converts an int year to a Date format.
-	 * @param year value
-	 * @return Date representing the year
+	 * Converts an int value into a Date object.
+	 * @param time value to convert into Date
+	 * @return Date object representing int value
 	 */
-	public static Date dateYear(final int year) {
+	public static Date dateTime(final int time) {
 		final Calendar calendar = Calendar.getInstance();
-		calendar.set(year, 01, 01, 01, 0, 0);
+		calendar.set(time, 01, 01, 01, 0, 0);
 		return calendar.getTime();
 	}
 }

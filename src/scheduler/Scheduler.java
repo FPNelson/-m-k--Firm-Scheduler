@@ -68,7 +68,9 @@ public class Scheduler {
 				if(taskInstance.getR() <= curTime) {
 					if(!taskInstance.equals(curTaskInstance)) {
 						if(curTaskInstance != null) {
-							taskMap.get(curTaskInstance.getParent().getName()).addSubtask(SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime, curTime+1));
+							org.jfree.data.gantt.Task task = SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime, curTime+1);
+							task.setPercentComplete(curTaskInstance.isMandatory() ? 1.0 : 0.0);
+							taskMap.get(curTaskInstance.getParent().getName()).addSubtask(task);
 						}
 						
 						curTaskStartTime = curTime + 1;
@@ -81,7 +83,9 @@ public class Scheduler {
 					}
 					
 					if(taskInstance.getT() < 1) {
-						taskMap.get(curTaskInstance.getParent().getName()).addSubtask(SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime, curTime+1));
+						org.jfree.data.gantt.Task task = SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime, curTime+1);
+						task.setPercentComplete(curTaskInstance.isMandatory() ? 1.0 : 0.0);
+						taskMap.get(curTaskInstance.getParent().getName()).addSubtask(task);
 						taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
 						curTaskInstance = null;
 					}

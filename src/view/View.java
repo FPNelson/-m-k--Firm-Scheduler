@@ -283,13 +283,15 @@ public class View extends JFrame {
 	private ChartPanel getChartPanel(IntervalCategoryDataset chartDataset, String title) {
 		final JFreeChart chart = ChartFactory.createGanttChart(title, "Task", "Time", chartDataset, true, false, false);
 		
-		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setDateFormatOverride(new SimpleDateFormat("YYYY"));
+		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setDateFormatOverride(new SimpleDateFormat("Y"));
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setTickUnit(new DateTickUnit(DateTickUnitType.YEAR, 5));
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinorTickCount(5);
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinorTickMarksVisible(true);
-		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinimumDate(SchedulerUtils.dateYear(1));
+		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinimumDate(SchedulerUtils.dateTime(1));
 		
-		((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(0, Color.blue);
+		chart.removeLegend();
+		
+		((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(0, new Color(0.0f, 0.0f, 0.0f, 0.0f));
 		
 		final ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(750, 350));
