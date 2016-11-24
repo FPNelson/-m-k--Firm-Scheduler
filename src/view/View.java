@@ -38,7 +38,6 @@ import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.category.IntervalCategoryDataset;
 
-import scheduler.SchedulerUtils;
 import controller.SchedulerController;
 
 public class View extends JFrame {
@@ -287,7 +286,6 @@ public class View extends JFrame {
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setTickUnit(new DateTickUnit(DateTickUnitType.YEAR, 5));
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinorTickCount(5);
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinorTickMarksVisible(true);
-		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinimumDate(SchedulerUtils.dateTime(1));
 		
 		chart.removeLegend();
 		

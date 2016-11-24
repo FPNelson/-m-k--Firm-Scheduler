@@ -3,7 +3,7 @@ package scheduler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,10 +19,10 @@ public class Scheduler {
 	 * @param tasks - List of tasks which need to be scheduled
 	 * @param taskComparator - Scheduling algorithm used on the base tasks [RMS]
 	 * @param taskInstanceComparator - Scheduling algorithm used on the task instances [(m, k)-Firm]
-	 * @return
+	 * @return TaskSeriesCollection of all tasks in schedule
 	 */
 	public static TaskSeriesCollection createSchedule(List<Task> tasks, Comparator<Task> taskComparator, Comparator<TaskInstance> taskInstanceComparator) {
-		Map<String, org.jfree.data.gantt.Task> taskMap = new HashMap<String, org.jfree.data.gantt.Task>();
+		Map<String, org.jfree.data.gantt.Task> taskMap = new LinkedHashMap<String, org.jfree.data.gantt.Task>();
 		
 		int curTaskStartTime = 0;
 		TaskInstance curTaskInstance = null;
