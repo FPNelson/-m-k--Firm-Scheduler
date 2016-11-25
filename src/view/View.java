@@ -50,10 +50,11 @@ public class View extends JFrame {
 	
 	public JFormattedTextField[] fields = new JFormattedTextField[5];
 	
+	public JTextArea textArea = new JTextArea();
+	
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private ChartPanel chartPanel;
 	private JSplitPane ganttPane;
-	private JTextArea textArea = new JTextArea();
 	private JScrollPane scrollPane = new JScrollPane(this.textArea);
 	private JPanel taskEditPanel, taskListPanel;
 	
@@ -82,6 +83,8 @@ public class View extends JFrame {
 		
 		this.taskListPanel = getTaskListPanel();
 		this.taskEditPanel = getTaskEditPanel();
+		
+		this.textArea.setEditable(false);
 		
 		this.taskSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.taskEditPanel, this.taskListPanel);
 		this.tabbedPane.add("Task Editor", this.taskSplitPane);
@@ -280,14 +283,12 @@ public class View extends JFrame {
 	 * @return Panel containing schedule
 	 */
 	private ChartPanel getChartPanel(IntervalCategoryDataset chartDataset, String title) {
-		final JFreeChart chart = ChartFactory.createGanttChart(title, "Task", "Time", chartDataset, true, false, false);
+		final JFreeChart chart = ChartFactory.createGanttChart(title, "Task", "Time", chartDataset, false, false, false);
 		
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setDateFormatOverride(new SimpleDateFormat("Y"));
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setTickUnit(new DateTickUnit(DateTickUnitType.YEAR, 5));
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinorTickCount(5);
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinorTickMarksVisible(true);
-		
-		chart.removeLegend();
 		
 		((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(0, new Color(0.0f, 0.0f, 0.0f, 0.0f));
 		

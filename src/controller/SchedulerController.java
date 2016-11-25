@@ -58,17 +58,14 @@ public class SchedulerController {
 				int m = Integer.parseInt(this.view.fields[3].getText());
 				int k = Integer.parseInt(this.view.fields[4].getText());
 				
-				Task tempTask = tasks.remove(selectedIndex);
-				
-				for(Task task : tasks) {
-					if(name.equals(task.getName())) {
+				for(int i = 0; i < tasks.size(); i++) {
+					if(i != selectedIndex && name.equals(tasks.get(i).getName())) {
 						JOptionPane.showMessageDialog(this.view.getContentPane(), "Task name is already used", "Name Error", JOptionPane.ERROR_MESSAGE);
-						tasks.add(selectedIndex, tempTask);
 						return;
 					}
 				}
 				
-				tasks.add(new Task(name, c, p, m, k));
+				tasks.set(selectedIndex, new Task(name, c, p, m, k));
 			}
 			catch(NumberFormatException e) {
 				JOptionPane.showMessageDialog(this.view.getContentPane(), "Please fill out all fields", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -97,7 +94,8 @@ public class SchedulerController {
 	 */
 	public void scheduleTasks() {
 		if(this.tasks.size() > 0) {
-			this.view.chartDataset = Scheduler.createSchedule(this.tasks, new TaskComparator(), new TaskInstanceComparator());
+			this.view.textArea.setText("");
+			this.view.chartDataset = Scheduler.createSchedule(this.tasks, new TaskComparator(), new TaskInstanceComparator(), this.view.textArea);
 		}
 		
 		this.view.refreshChartPanel();

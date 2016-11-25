@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JTextArea;
+
 import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 
@@ -21,7 +23,7 @@ public class Scheduler {
 	 * @param taskInstanceComparator - Scheduling algorithm used on the task instances [(m, k)-Firm]
 	 * @return TaskSeriesCollection of all tasks in schedule
 	 */
-	public static TaskSeriesCollection createSchedule(List<Task> tasks, Comparator<Task> taskComparator, Comparator<TaskInstance> taskInstanceComparator) {
+	public static TaskSeriesCollection createSchedule(List<Task> tasks, Comparator<Task> taskComparator, Comparator<TaskInstance> taskInstanceComparator, JTextArea textArea) {
 		Map<String, org.jfree.data.gantt.Task> taskMap = new LinkedHashMap<String, org.jfree.data.gantt.Task>();
 		
 		int curTaskStartTime = 0;
@@ -40,8 +42,8 @@ public class Scheduler {
 			
 			int a2 = 0;
 			for(int j = 0; j < i; j++) {
-				if(task.getM() == tasks.get(j).getM() && task.getK() == tasks.get(j).getK()) {
-					a2 += task.getM();
+				if(((double)task.getM() / task.getK()) == ((double)tasks.get(j).getM() / tasks.get(j).getK())) {
+					a2 += Math.min(task.getM(), tasks.get(j).getM());
 				}
 			}
 			
@@ -58,7 +60,7 @@ public class Scheduler {
 		int curTime = 0;
 		
 		for(boolean curTimeUsed = false; curTime <= lcm; curTimeUsed = false) {
-			schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime);
+			schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime, textArea);
 			
 			Collections.sort(taskInstances, taskInstanceComparator);
 			
@@ -89,8 +91,6 @@ public class Scheduler {
 						taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
 						curTaskInstance = null;
 					}
-					
-					System.out.println("Time: " + curTime + ", Task: " + taskInstance.getParent().getName() + ", Instance: " + taskInstance.getA());
 				}
 			}
 			if(curTimeUsed == false) {
@@ -101,7 +101,9 @@ public class Scheduler {
 		TaskSeriesCollection taskCollection = new TaskSeriesCollection();
 		TaskSeries taskSeries = new TaskSeries("Scheduled Tasks");
 		
-		schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime);
+		schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime, textArea);
+		
+		textArea.append(schedulingFailed ? "Scheduling Failed" : "Scheduling Succeeded");
 		
 		for(String task : taskMap.keySet()) {
 			if(taskMap.get(task).getSubtaskCount() > 0) {
@@ -124,16 +126,16 @@ public class Scheduler {
 	 * @param curTime - Current time in schedule
 	 * @return True if a deadline was missed, false otherwise
 	 */
-	public static boolean checkDeadlines(boolean missDeadline, List<TaskInstance> taskInstances, int curTime) {
+	public static boolean checkDeadlines(boolean missDeadline, List<TaskInstance> taskInstances, int curTime, JTextArea textArea) {
 		for(int i = 0; i < taskInstances.size(); i++) {
 			TaskInstance taskInstance = taskInstances.get(i);
 			
 			if(taskInstance.getT() > 0 && taskInstance.isPastDeadline(curTime)) {
-				if(missDeadline == false) {
+				if(taskInstance.isMandatory()) {
+					textArea.append("Task " + taskInstance.getParent().getName() + " missed deadline at time " + (curTime + 1) + ".\n");
 					missDeadline = true;
 				}
 				
-				System.out.println("Deadline Missed - Time: " + (curTime + 1) + ", Task: " + taskInstance.getParent().getName() + ", Instance: " + taskInstance.getA() + ", Mandatory: " + taskInstance.isMandatory());
 				taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
 				
 				i--;
