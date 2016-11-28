@@ -54,13 +54,11 @@ public class View extends JFrame {
 	
 	private JTabbedPane tabbedPane = new JTabbedPane();
 	private ChartPanel chartPanel;
-	private JSplitPane ganttPane;
+	private JSplitPane ganttPane, taskPane;
 	private JScrollPane scrollPane = new JScrollPane(this.textArea);
 	private JPanel taskEditPanel, taskListPanel;
 	
 	private SchedulerController controller;
-	
-	private JSplitPane taskSplitPane;
 	
 	public static void main(String[] args) {
 		final View frame = new View();
@@ -86,15 +84,16 @@ public class View extends JFrame {
 		
 		this.textArea.setEditable(false);
 		
-		this.taskSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.taskEditPanel, this.taskListPanel);
-		this.tabbedPane.add("Task Editor", this.taskSplitPane);
+		this.taskPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.taskEditPanel, this.taskListPanel);
+		this.taskPane.setEnabled(false);
+		this.tabbedPane.add("Task Editor", this.taskPane);
 		
 		this.chartPanel = getChartPanel(this.chartDataset, "(m, k)-RMS Schedule");
 		
 		this.ganttPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.chartPanel, this.scrollPane);
+		this.ganttPane.setEnabled(false);
 		
 		this.tabbedPane.add("(m, k)-RMS Schedule", this.ganttPane);
-		
 		this.tabbedPane.setEnabledAt(1, false);
 		
 		refreshChartPanel();

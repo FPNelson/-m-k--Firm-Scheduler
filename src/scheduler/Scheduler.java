@@ -47,7 +47,7 @@ public class Scheduler {
 				}
 			}
 			
-			taskInstances.add(new TaskInstance(task, 0, a2, i, 1 + tasks.size(), 0));
+			taskInstances.add(new TaskInstance(task, 0, a2, i, tasks.size(), 0));
 			
 			periods[i] = task.getP();
 			curTaskStartTime = Math.max(curTaskStartTime, (int)periods[i] * task.getK());
@@ -56,7 +56,7 @@ public class Scheduler {
 		long lcm = Math.max(SchedulerUtils.lcm(periods), curTaskStartTime) - 1;
 		
 		for(int i = 0; i < tasks.size(); i++) {
-			taskMap.put(tasks.get(i).getName(), SchedulerUtils.createTask(tasks.get(i).getName(), 1, (int)lcm+1));
+			taskMap.put(tasks.get(i).getName(), SchedulerUtils.createTask(tasks.get(i).getName(), 1, (int)lcm));
 		}
 		
 		int curTime = 0;
@@ -73,7 +73,7 @@ public class Scheduler {
 				if(taskInstance.getR() <= curTime) {
 					if(!taskInstance.equals(curTaskInstance)) {
 						if(curTaskInstance != null) {
-							org.jfree.data.gantt.Task task = SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime, curTime+1);
+							org.jfree.data.gantt.Task task = SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime-1, curTime);
 							task.setPercentComplete(curTaskInstance.isMandatory() ? 1.0 : 0.0);
 							taskMap.get(curTaskInstance.getParent().getName()).addSubtask(task);
 						}
@@ -88,10 +88,10 @@ public class Scheduler {
 					}
 					
 					if(taskInstance.getT() < 1) {
-						org.jfree.data.gantt.Task task = SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime, curTime+1);
+						org.jfree.data.gantt.Task task = SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime-1, curTime);
 						task.setPercentComplete(curTaskInstance.isMandatory() ? 1.0 : 0.0);
 						taskMap.get(curTaskInstance.getParent().getName()).addSubtask(task);
-						taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
+						taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
 						curTaskInstance = null;
 					}
 				}
@@ -130,19 +130,19 @@ public class Scheduler {
 	 * @return True if a deadline was missed, false otherwise
 	 */
 	public static boolean checkDeadlines(boolean missDeadline, List<TaskInstance> taskInstances, int curTime, JTextArea textArea) {
-		for(int i = 0; i < taskInstances.size(); i++) {
+		for(int i = 0; i < taskInstances.size();) {
 			TaskInstance taskInstance = taskInstances.get(i);
 			
 			if(taskInstance.getT() > 0 && taskInstance.isPastDeadline(curTime)) {
 				if(taskInstance.isMandatory()) {
-					textArea.append("Task " + taskInstance.getParent().getName() + " missed deadline at time " + (curTime + 1) + ".\n");
+					textArea.append("Task " + taskInstance.getParent().getName() + " missed deadline at time " + curTime + ".\n");
 					missDeadline = true;
 				}
 				
-				taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, 1 + taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
-				
-				i--;
-				continue;
+				taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
+			}
+			else {
+				i++;
 			}
 		}
 		

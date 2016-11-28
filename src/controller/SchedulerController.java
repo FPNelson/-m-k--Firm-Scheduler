@@ -116,8 +116,5 @@ public class SchedulerController {
 		if(this.view.taskList.getModel().getSize() > selectedIndex && selectedIndex > -1) {
 			this.view.taskList.setSelectedIndex(selectedIndex);
 		}
-		else if(this.view.taskList.getModel().getSize() > 0) {
-			this.view.taskList.setSelectedIndex(0);
-		}
 	}
 }
