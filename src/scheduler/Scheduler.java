@@ -26,7 +26,7 @@ public class Scheduler {
 	public static TaskSeriesCollection createSchedule(List<Task> tasks, Comparator<Task> taskComparator, Comparator<TaskInstance> taskInstanceComparator, JTextArea textArea) {
 		Map<String, org.jfree.data.gantt.Task> taskMap = new LinkedHashMap<String, org.jfree.data.gantt.Task>();
 		
-		int curTaskStartTime = 0;
+		int curTaskStartTime = 0, curTime = 0;
 		TaskInstance curTaskInstance = null;
 		
 		boolean schedulingFailed = false;
@@ -50,24 +50,23 @@ public class Scheduler {
 			taskInstances.add(new TaskInstance(task, 0, a2, i, tasks.size(), 0));
 			
 			periods[i] = task.getP();
-			curTaskStartTime = Math.max(curTaskStartTime, (int)periods[i] * task.getK());
+			curTime = Math.max(curTime, (int)periods[i] * task.getK());
 		}
 		
-		long lcm = Math.max(SchedulerUtils.lcm(periods), curTaskStartTime) - 1;
+		long lcm = Math.max(SchedulerUtils.lcm(periods), curTime) - 1;
 		
 		for(int i = 0; i < tasks.size(); i++) {
 			taskMap.put(tasks.get(i).getName(), SchedulerUtils.createTask(tasks.get(i).getName(), 1, (int)lcm));
 		}
 		
-		int curTime = 0;
-		curTaskStartTime = curTime;
+		curTime = curTaskStartTime;
 		
 		for(boolean curTimeUsed = false; curTime <= lcm; curTimeUsed = false) {
 			schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime, textArea);
 			
 			Collections.sort(taskInstances, taskInstanceComparator);
 			
-			for(int i = 0; i < tasks.size() && curTimeUsed == false; i++) {
+			for(int i = 0; i < tasks.size() && !curTimeUsed; i++) {
 				TaskInstance taskInstance = taskInstances.get(i);
 				
 				if(taskInstance.getR() <= curTime) {
@@ -96,13 +95,13 @@ public class Scheduler {
 					}
 				}
 			}
-			if(curTimeUsed == false) {
+			if(!curTimeUsed) {
 				curTime++;
 			}
 		}
 		
 		TaskSeriesCollection taskCollection = new TaskSeriesCollection();
-		TaskSeries taskSeries = new TaskSeries("Scheduled Tasks");
+		TaskSeries taskSeries = new TaskSeries("");
 		
 		schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime, textArea);
 		

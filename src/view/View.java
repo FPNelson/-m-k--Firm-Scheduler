@@ -10,7 +10,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 
-import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -25,6 +24,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -32,10 +32,11 @@ import javax.swing.event.ListSelectionListener;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItem;
+import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickUnit;
 import org.jfree.chart.axis.DateTickUnitType;
-import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.category.IntervalCategoryDataset;
 
 import controller.SchedulerController;
@@ -77,7 +78,7 @@ public class View extends JFrame {
 	 */
 	private View() {
 		super("(m, k)-RMS Simulator");
-		setSize(800, 500);
+		this.setSize(800, 500);
 		
 		this.taskListPanel = getTaskListPanel();
 		this.taskEditPanel = getTaskEditPanel();
@@ -86,21 +87,21 @@ public class View extends JFrame {
 		
 		this.taskPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.taskEditPanel, this.taskListPanel);
 		this.taskPane.setEnabled(false);
-		this.tabbedPane.add("Task Editor", this.taskPane);
 		
 		this.chartPanel = getChartPanel(this.chartDataset, "(m, k)-RMS Schedule");
 		
 		this.ganttPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.chartPanel, this.scrollPane);
 		this.ganttPane.setEnabled(false);
 		
+		this.tabbedPane.add("Task Editor", this.taskPane);
 		this.tabbedPane.add("(m, k)-RMS Schedule", this.ganttPane);
 		this.tabbedPane.setEnabledAt(1, false);
 		
-		refreshChartPanel();
+		this.refreshChartPanel();
 		
 		this.controller = new SchedulerController(this);
 		
-		setContentPane(this.tabbedPane);
+		this.setContentPane(this.tabbedPane);
 		
 		this.tabbedPane.setSelectedIndex(0);
 	}
@@ -114,10 +115,9 @@ public class View extends JFrame {
 		this.ganttPane.add(this.chartPanel);
 		
 		this.tabbedPane.repaint();
+		this.tabbedPane.setSelectedIndex(1);
 		
 		this.scrollPane.setPreferredSize(new Dimension(800, 50));
-		
-		this.tabbedPane.setSelectedIndex(1);
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class View extends JFrame {
 		this.fields[1] = new JFormattedTextField();
 		this.fields[1].setPreferredSize(new Dimension(200, 20));
 		JPanel cFieldBorder = new JPanel(new BorderLayout());
-		cFieldBorder.setBorder(new TitledBorder("Computation Time"));
+		cFieldBorder.setBorder(new TitledBorder("Computation Time (c)"));
 		cFieldBorder.add(fields[1], BorderLayout.WEST);
 		panel.add(cFieldBorder);
 		
@@ -178,23 +178,23 @@ public class View extends JFrame {
 		this.fields[2] = new JFormattedTextField();
 		this.fields[2].setPreferredSize(new Dimension(200, 20));
 		JPanel pFieldBorder = new JPanel(new BorderLayout());
-		pFieldBorder.setBorder(new TitledBorder("Period"));
+		pFieldBorder.setBorder(new TitledBorder("Period (p)"));
 		pFieldBorder.add(fields[2], BorderLayout.WEST);
 		panel.add(pFieldBorder);
 		
-		// Mandatory Tasks
+		// Mandatory Instances
 		this.fields[3] = new JFormattedTextField();
 		this.fields[3].setPreferredSize(new Dimension(200, 20));
 		JPanel mFieldBorder = new JPanel(new BorderLayout());
-		mFieldBorder.setBorder(new TitledBorder("Mandatory Tasks"));
+		mFieldBorder.setBorder(new TitledBorder("Mandatory Instances (m)"));
 		mFieldBorder.add(fields[3], BorderLayout.WEST);
 		panel.add(mFieldBorder);
 		
-		// Tasks per Instance
+		// Consecutive Instances
 		this.fields[4] = new JFormattedTextField();
 		this.fields[4].setPreferredSize(new Dimension(200, 20));
 		JPanel kFieldBorder = new JPanel(new BorderLayout());
-		kFieldBorder.setBorder(new TitledBorder("Tasks per Instance"));
+		kFieldBorder.setBorder(new TitledBorder("Consecutive Instances (k)"));
 		kFieldBorder.add(fields[4], BorderLayout.WEST);
 		panel.add(kFieldBorder);
 		
@@ -204,8 +204,8 @@ public class View extends JFrame {
 		
 		// Schedule Button
 		final JButton scheduleButton = new JButton("Create Schedule");
-		scheduleButton.setVerticalTextPosition(AbstractButton.BOTTOM);
-		scheduleButton.setHorizontalTextPosition(AbstractButton.CENTER);
+		scheduleButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+		scheduleButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		scheduleButton.setSize(new Dimension(200, 30));
 		scheduleButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		scheduleButton.setEnabled(taskListModel.getSize() > 0);
@@ -218,8 +218,8 @@ public class View extends JFrame {
 		
 		// Add Button
 		JButton addButton = new JButton("Add Task");
-		addButton.setVerticalTextPosition(AbstractButton.BOTTOM);
-		addButton.setHorizontalTextPosition(AbstractButton.CENTER);
+		addButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+		addButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		addButton.setSize(new Dimension(200, 30));
 		addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		addButton.addActionListener(new ActionListener() {
@@ -232,8 +232,8 @@ public class View extends JFrame {
 		
 		// Edit Button
 		JButton editButton = new JButton("Edit Task");
-		editButton.setVerticalTextPosition(AbstractButton.BOTTOM);
-		editButton.setHorizontalTextPosition(AbstractButton.CENTER);
+		editButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+		editButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		editButton.setSize(new Dimension(200, 30));
 		editButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		editButton.addActionListener(new ActionListener() {
@@ -245,8 +245,8 @@ public class View extends JFrame {
 		
 		// Delete Button
 		JButton deleteButton = new JButton("Delete Task");
-		deleteButton.setVerticalTextPosition(AbstractButton.BOTTOM);
-		deleteButton.setHorizontalTextPosition(AbstractButton.CENTER);
+		deleteButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+		deleteButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		deleteButton.setSize(new Dimension(200, 30));
 		deleteButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		deleteButton.addActionListener(new ActionListener() {
@@ -282,14 +282,23 @@ public class View extends JFrame {
 	 * @return Panel containing schedule
 	 */
 	private ChartPanel getChartPanel(IntervalCategoryDataset chartDataset, String title) {
-		final JFreeChart chart = ChartFactory.createGanttChart(title, "Task", "Time", chartDataset, false, false, false);
+		final JFreeChart chart = ChartFactory.createGanttChart(title, "Task", "Time", chartDataset, true, false, false);
 		
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setDateFormatOverride(new SimpleDateFormat("Y"));
 		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setTickUnit(new DateTickUnit(DateTickUnitType.YEAR, 5));
-		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinorTickCount(5);
-		((DateAxis) chart.getCategoryPlot().getRangeAxis()).setMinorTickMarksVisible(true);
+		chart.getCategoryPlot().getRangeAxis().setMinorTickCount(5);
+		chart.getCategoryPlot().getRangeAxis().setMinorTickMarksVisible(true);
 		
-		((CategoryPlot) chart.getPlot()).getRenderer().setSeriesPaint(0, new Color(0.0f, 0.0f, 0.0f, 0.0f));
+		LegendItemCollection legendItems = new LegendItemCollection();
+		legendItems.add(new LegendItem("Mandatory Task", Color.GREEN));
+		legendItems.add(new LegendItem("Optional Task", Color.RED));
+		chart.getCategoryPlot().setFixedLegendItems(legendItems);
+		
+		chart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
+		chart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
+		chart.getCategoryPlot().getDomainAxis().setCategoryMargin(0);
+		
+		chart.getCategoryPlot().getRenderer().setSeriesPaint(0, new Color(0f, 0f, 0f, 0f));
 		
 		final ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new Dimension(750, 350));
