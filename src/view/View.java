@@ -41,6 +41,11 @@ import org.jfree.data.category.IntervalCategoryDataset;
 
 import controller.SchedulerController;
 
+/**
+ * Class for the GUI.
+ * @author Franklin Nelson
+ *
+ */
 public class View extends JFrame {
 	private static final long serialVersionUID = 1L;
 	

@@ -1,5 +1,10 @@
 package task;
 
+/**
+ * Class representing an instance of a task.
+ * @author Franklin Nelson
+ *
+ */
 public class TaskInstance {
 	/**
 	 * Parent Task

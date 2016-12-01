@@ -12,6 +12,11 @@ import task.TaskComparator;
 import task.TaskInstanceComparator;
 import view.View;
 
+/**
+ * Class for interacting with the task list.
+ * @author Franklin Nelson
+ *
+ */
 public class SchedulerController {
 	private List<Task> tasks = new ArrayList<Task>();
 	private View view;

@@ -15,6 +15,11 @@ import org.jfree.data.gantt.TaskSeriesCollection;
 import task.Task;
 import task.TaskInstance;
 
+/**
+ * Class to schedule a set of periodic tasks.
+ * @author Franklin Nelson
+ *
+ */
 public class Scheduler {
 	/**
 	 * Create an (m, k)-RMS schedule of the list of tasks given.

@@ -2,6 +2,11 @@ package task;
 
 import java.util.Comparator;
 
+/**
+ * Orders the tasks using RMS, the task with lowest period goes first.
+ * @author Franklin Nelson
+ *
+ */
 public class TaskComparator implements Comparator<Task> {
 	/**
 	 * Orders the tasks using RMS, the task with lowest period goes first.

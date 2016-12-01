@@ -4,6 +4,11 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Contains several utility functions to help with scheduling tasks.
+ * @author Franklin Nelson
+ *
+ */
 public class SchedulerUtils {
 	/**
 	 * Calculates the least common multiple of all values in array.

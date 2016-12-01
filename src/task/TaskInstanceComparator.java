@@ -2,6 +2,11 @@ package task;
 
 import java.util.Comparator;
 
+/**
+ * Orders the tasks using (m, k)-Firm algorithm, the task with the highest priority goes first.
+ * @author Franklin Nelson
+ *
+ */
 public class TaskInstanceComparator implements Comparator<TaskInstance> {
 	/**
 	 * Orders the tasks using (m, k)-Firm algorithm, the task with the highest priority goes first.

@@ -1,5 +1,10 @@
 package task;
 
+/**
+ * Class representing a periodic task.
+ * @author Franklin Nelson
+ *
+ */
 public class Task {
 	/**
 	 * Name of Task
