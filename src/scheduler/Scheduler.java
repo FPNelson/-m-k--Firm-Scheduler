@@ -1,5 +1,6 @@
 package scheduler;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,14 +46,18 @@ public class Scheduler {
 		for(int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
 			
-			int a2 = 0;
+			periods[i] = BigInteger.valueOf(task.getM()).gcd(BigInteger.valueOf(task.getK())).intValue();
+			task.setM(task.getM() / (int)periods[i]);
+			task.setK(task.getK() / (int)periods[i]);
+			
+			periods[i] = 0;
 			for(int j = 0; j < i; j++) {
 				if(task.getK() == tasks.get(j).getK()) {
-					a2 += Math.min(task.getM(), tasks.get(j).getM());
+					periods[i] += Math.min(task.getM(), tasks.get(j).getM());
 				}
 			}
 			
-			taskInstances.add(new TaskInstance(task, 0, a2, i, tasks.size(), 0));
+			taskInstances.add(new TaskInstance(task, 0, (int)periods[i], i, tasks.size(), 0));
 			
 			periods[i] = task.getP();
 			curTime = Math.max(curTime, (int)periods[i] * task.getK());
