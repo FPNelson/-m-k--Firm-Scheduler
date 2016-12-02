@@ -120,13 +120,11 @@ public class Scheduler {
 		double avg = 0.0;
 		for(int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
-			avg += ((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / ((((double)(lcm + 1) / task.getC()) * ((double)task.getM() / task.getK())) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())));
-			textArea.append(task.getName() + " MQR" + 
-					": (" + (double)periods[i] + 
-					" - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + 
-					") / (" + (((double)(lcm + 1) / task.getC()) * ((double)task.getM() / task.getK())) + 
-					" - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + 
-					") = " + ((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / ((((double)(lcm + 1) / task.getC()) * ((double)task.getM() / task.getK())) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) + "\n");
+			avg += task.getM() == task.getK() ? 0.0 : ((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / (((double)(lcm + 1) / task.getP()) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())));
+			textArea.append(task.getName() + " MQR: (");
+			textArea.append((double)periods[i] + " - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + ") / (");
+			textArea.append(((double)(lcm + 1) / task.getP()) + " - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + ") = ");
+			textArea.append((task.getM() == task.getK() ? "0.0" : String.valueOf(((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / (((double)(lcm + 1) / task.getP()) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))))) + "\n");
 		}
 		
 		textArea.append("Average MQR: " + avg / tasks.size() + "\n");
