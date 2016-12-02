@@ -117,9 +117,11 @@ public class Scheduler {
 		
 		schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime, textArea);
 		
+		double avg = 0.0;
 		for(int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
-			textArea.append("MQR of " + task.getName() + 
+			avg += ((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / ((((double)(lcm + 1) / task.getC()) * ((double)task.getM() / task.getK())) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())));
+			textArea.append(task.getName() + " MQR" + 
 					": (" + (double)periods[i] + 
 					" - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + 
 					") / (" + (((double)(lcm + 1) / task.getC()) * ((double)task.getM() / task.getK())) + 
@@ -127,6 +129,7 @@ public class Scheduler {
 					") = " + ((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / ((((double)(lcm + 1) / task.getC()) * ((double)task.getM() / task.getK())) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) + "\n");
 		}
 		
+		textArea.append("Average MQR: " + avg / tasks.size() + "\n");
 		textArea.append(schedulingFailed ? "Scheduling Failed" : "Scheduling Succeeded");
 		
 		for(String task : taskMap.keySet()) {
