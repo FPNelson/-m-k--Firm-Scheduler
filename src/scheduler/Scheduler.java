@@ -47,7 +47,7 @@ public class Scheduler {
 			
 			int a2 = 0;
 			for(int j = 0; j < i; j++) {
-				if(((double)task.getM() / task.getK()) == ((double)tasks.get(j).getM() / tasks.get(j).getK())) {
+				if(task.getK() == tasks.get(j).getK()) {
 					a2 += Math.min(task.getM(), tasks.get(j).getM());
 				}
 			}
@@ -62,6 +62,7 @@ public class Scheduler {
 		
 		for(int i = 0; i < tasks.size(); i++) {
 			taskMap.put(tasks.get(i).getName(), SchedulerUtils.createTask(tasks.get(i).getName(), 1, (int)lcm));
+			periods[i] = 0;
 		}
 		
 		curTime = curTaskStartTime;
@@ -96,6 +97,7 @@ public class Scheduler {
 						task.setPercentComplete(curTaskInstance.isMandatory() ? 1.0 : 0.0);
 						taskMap.get(curTaskInstance.getParent().getName()).addSubtask(task);
 						taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
+						periods[tasks.indexOf(taskInstance.getParent())]++;
 						curTaskInstance = null;
 					}
 				}
@@ -109,6 +111,16 @@ public class Scheduler {
 		TaskSeries taskSeries = new TaskSeries("");
 		
 		schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime, textArea);
+		
+		for(int i = 0; i < tasks.size(); i++) {
+			Task task = tasks.get(i);
+			textArea.append("MQR of " + task.getName() + 
+					": (" + (double)periods[i] + 
+					" - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + 
+					") / (" + (((double)(lcm + 1) / task.getC()) * ((double)task.getM() / task.getK())) + 
+					" - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + 
+					") = " + ((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / ((((double)(lcm + 1) / task.getC()) * ((double)task.getM() / task.getK())) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) + "\n");
+		}
 		
 		textArea.append(schedulingFailed ? "Scheduling Failed" : "Scheduling Succeeded");
 		
