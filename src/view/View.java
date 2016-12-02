@@ -75,6 +75,7 @@ public class View extends JFrame {
 			}
 		});
 		
+		frame.setResizable(false);
 		frame.setVisible(true);
 	}
 	
