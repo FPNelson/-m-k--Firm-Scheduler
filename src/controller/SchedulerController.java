@@ -21,6 +21,10 @@ public class SchedulerController {
 	private List<Task> tasks = new ArrayList<Task>();
 	private View view;
 	
+	/**
+	 * Constructor for SchedulerController tied to the view.
+	 * @param view to tie the SchedulerController to
+	 */
 	public SchedulerController(View view) {
 		this.view = view;
 	}

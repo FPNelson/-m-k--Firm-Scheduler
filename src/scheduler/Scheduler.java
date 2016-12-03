@@ -27,6 +27,7 @@ public class Scheduler {
 	 * @param tasks - List of tasks which need to be scheduled
 	 * @param taskComparator - Scheduling algorithm used on the base tasks [RMS]
 	 * @param taskInstanceComparator - Scheduling algorithm used on the task instances [(m, k)-Firm]
+	 * @param textArea - Text box for all messages when scheduling
 	 * @return TaskSeriesCollection of all tasks in schedule
 	 */
 	public static TaskSeriesCollection createSchedule(List<Task> tasks, Comparator<Task> taskComparator, Comparator<TaskInstance> taskInstanceComparator, JTextArea textArea) {
@@ -43,6 +44,7 @@ public class Scheduler {
 		
 		long[] periods = new long[tasks.size()];
 		
+		// Populate the first instances of each task
 		for(int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
 			
@@ -51,6 +53,8 @@ public class Scheduler {
 			task.setK(task.getK() / (int)periods[i]);
 			
 			periods[i] = 0;
+			
+			// Check if any other task instances have the same optional instances
 			for(int j = 0; j < i; j++) {
 				if(task.getK() == tasks.get(j).getK()) {
 					periods[i] += Math.min(task.getM(), tasks.get(j).getM());
@@ -63,6 +67,7 @@ public class Scheduler {
 			curTime = Math.max(curTime, (int)periods[i] * task.getK());
 		}
 		
+		// The total length of the schedule
 		long lcm = Math.max(SchedulerUtils.lcm(periods), curTime) - 1;
 		
 		for(int i = 0; i < tasks.size(); i++) {
@@ -81,6 +86,7 @@ public class Scheduler {
 				TaskInstance taskInstance = taskInstances.get(i);
 				
 				if(taskInstance.getR() <= curTime) {
+					// This is a continuing task instance
 					if(!taskInstance.equals(curTaskInstance)) {
 						if(curTaskInstance != null) {
 							org.jfree.data.gantt.Task task = SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime-1, curTime);
@@ -92,11 +98,13 @@ public class Scheduler {
 						curTaskInstance = taskInstance;
 					}
 					
+					// Check if the task instance can execute
 					if(taskInstance.doComputation(curTime, curTime + 1)) {
 						curTimeUsed = true;
 						curTime++;
 					}
 					
+					// Task instance is about to finish
 					if(taskInstance.getT() < 1) {
 						org.jfree.data.gantt.Task task = SchedulerUtils.createTask(curTaskInstance.getParent().getName(), curTaskStartTime-1, curTime);
 						task.setPercentComplete(curTaskInstance.isMandatory() ? 1.0 : 0.0);
@@ -118,9 +126,12 @@ public class Scheduler {
 		schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime, textArea);
 		
 		double avg = 0.0;
+		
+		// Get the MQR of every task
 		for(int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
 			avg += task.getM() == task.getK() ? 0.0 : ((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / (((double)(lcm + 1) / task.getP()) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())));
+			
 			textArea.append(task.getName() + " MQR: (");
 			textArea.append((double)periods[i] + " - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + ") / (");
 			textArea.append(((double)(lcm + 1) / task.getP()) + " - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + ") = ");
@@ -130,6 +141,7 @@ public class Scheduler {
 		textArea.append("Average MQR: " + avg / tasks.size() + "\n");
 		textArea.append(schedulingFailed ? "Scheduling Failed" : "Scheduling Succeeded");
 		
+		// Populate the graph with task instances
 		for(String task : taskMap.keySet()) {
 			if(taskMap.get(task).getSubtaskCount() > 0) {
 				taskSeries.add(taskMap.get(task));
@@ -149,6 +161,7 @@ public class Scheduler {
 	 * @param missDeadline - A task has already missed the deadline
 	 * @param taskInstances - List of task instances to check for deadlines
 	 * @param curTime - Current time in schedule
+	 * @param textArea - Text box for all messages when scheduling
 	 * @return True if a deadline was missed, false otherwise
 	 */
 	public static boolean checkDeadlines(boolean missDeadline, List<TaskInstance> taskInstances, int curTime, JTextArea textArea) {
