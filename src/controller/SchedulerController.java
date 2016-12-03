@@ -48,6 +48,7 @@ public class SchedulerController {
 			}
 			
 			tasks.add(new Task(name, c, p, m, k));
+			this.refreshTasks();
 		}
 		catch(NumberFormatException e) {
 			JOptionPane.showMessageDialog(this.view.getContentPane(), "Please fill out all fields", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -75,6 +76,7 @@ public class SchedulerController {
 				}
 				
 				tasks.set(selectedIndex, new Task(name, c, p, m, k));
+				this.refreshTasks();
 			}
 			catch(NumberFormatException e) {
 				JOptionPane.showMessageDialog(this.view.getContentPane(), "Please fill out all fields", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -92,6 +94,7 @@ public class SchedulerController {
 		int selectedIndex = this.view.taskList.getSelectedIndex();
 		if(selectedIndex >= 0) {
 			tasks.remove(selectedIndex);
+			this.refreshTasks();
 		}
 		else {
 			JOptionPane.showMessageDialog(this.view.getContentPane(), "No task is selected", "Selection Error", JOptionPane.ERROR_MESSAGE);

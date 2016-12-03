@@ -64,18 +64,15 @@ public class Scheduler {
 			taskInstances.add(new TaskInstance(task, 0, (int)periods[i], i, tasks.size(), 0));
 			
 			periods[i] = task.getP();
-			curTime = Math.max(curTime, (int)periods[i] * task.getK());
 		}
 		
 		// The total length of the schedule
-		long lcm = Math.max(SchedulerUtils.lcm(periods), curTime) - 1;
+		long lcm = SchedulerUtils.lcm(periods) - 1;
 		
 		for(int i = 0; i < tasks.size(); i++) {
 			taskMap.put(tasks.get(i).getName(), SchedulerUtils.createTask(tasks.get(i).getName(), 1, (int)lcm));
 			periods[i] = 0;
 		}
-		
-		curTime = curTaskStartTime;
 		
 		for(boolean curTimeUsed = false; curTime <= lcm; curTimeUsed = false) {
 			schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime, textArea);

@@ -231,7 +231,6 @@ public class View extends JFrame {
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.addTask();
-				controller.refreshTasks();
 				scheduleButton.setEnabled(taskListModel.getSize() > 0);
 			}
 		});
@@ -245,7 +244,6 @@ public class View extends JFrame {
 		editButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.editTask();
-				controller.refreshTasks();
 			}
 		});
 		
@@ -258,7 +256,6 @@ public class View extends JFrame {
 		deleteButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.deleteTask();
-				controller.refreshTasks();
 				scheduleButton.setEnabled(taskListModel.getSize() > 0);
 			}
 		});
