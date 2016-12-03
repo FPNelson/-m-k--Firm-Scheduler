@@ -2,7 +2,6 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +13,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -213,7 +213,7 @@ public class View extends JFrame {
 		scheduleButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		scheduleButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		scheduleButton.setSize(new Dimension(200, 30));
-		scheduleButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		scheduleButton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		scheduleButton.setEnabled(taskListModel.getSize() > 0);
 		scheduleButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -227,7 +227,7 @@ public class View extends JFrame {
 		addButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		addButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		addButton.setSize(new Dimension(200, 30));
-		addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		addButton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.addTask();
@@ -240,7 +240,7 @@ public class View extends JFrame {
 		editButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		editButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		editButton.setSize(new Dimension(200, 30));
-		editButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		editButton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		editButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.editTask();
@@ -252,7 +252,7 @@ public class View extends JFrame {
 		deleteButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		deleteButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		deleteButton.setSize(new Dimension(200, 30));
-		deleteButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		deleteButton.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		deleteButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				controller.deleteTask();
