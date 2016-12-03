@@ -118,8 +118,6 @@ public class SchedulerController {
 			((DefaultListModel<String>) this.view.taskListModel).addElement(task.toString());
 		}
 		
-		if(this.view.taskList.getModel().getSize() > selectedIndex && selectedIndex > -1) {
-			this.view.taskList.setSelectedIndex(selectedIndex);
-		}
+		this.view.taskList.setSelectedIndex(Math.min(selectedIndex, this.view.taskList.getModel().getSize() - 1));
 	}
 }
