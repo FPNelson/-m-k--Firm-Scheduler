@@ -125,21 +125,32 @@ public class Scheduler {
 		
 		schedulingFailed = checkDeadlines(schedulingFailed, taskInstances, curTime, textArea);
 		
-		double avg = 0.0;
+		List<Double> avgMQR = new ArrayList<Double>();
 		
 		// Get the MQR of every task
 		for(int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
-			avg += task.getM() == task.getK() ? 0.0 : ((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / (((double)(lcm + 1) / task.getP()) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())));
 			
-			textArea.append(task.getName() + " MQR: (");
-			textArea.append((double)periods[i] + " - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + ") / (");
-			textArea.append(((double)(lcm + 1) / task.getP()) + " - " + (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK())) + ") = ");
-			textArea.append((task.getM() == task.getK() ? "0.0" : String.valueOf(((double)periods[i] - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))) / (((double)(lcm + 1) / task.getP()) - (((double)(lcm + 1) / task.getP()) * ((double)task.getM() / task.getK()))))) + "\n");
+			double k = (double)(lcm + 1) / task.getP();
+			double m = k * ((double)task.getM() / task.getK());
+			
+			if(task.getM() != task.getK()) {
+				avgMQR.add(((double)periods[i] - m) / (k - m));
+			}
+			
+			textArea.append(task.getName() + " MQR: (" + (double)periods[i] + " - " + m + ") / (" + k + " - " + m + ") = " + (task.getM() == task.getK() ? 0.0 : ((double)periods[i] - m) / (k - m)) + "\n");
 		}
 		
-		textArea.append("Average MQR: " + avg / tasks.size() + "\n");
-		textArea.append(schedulingFailed ? "Scheduling Failed" : "Scheduling Succeeded");
+		double mqr = 0.0;
+		
+		textArea.append("Average MQR: " + (avgMQR.size() < 2 ? (avgMQR.isEmpty() ? "0.0" : "") : "("));
+		
+		for(int i = 0; i < avgMQR.size(); i++) {
+			mqr += avgMQR.get(i);
+			textArea.append(avgMQR.get(i) + (i < avgMQR.size() - 1 ? " + " : avgMQR.size() < 2 ? "" : ") / " + avgMQR.size() + " = " + mqr / avgMQR.size()));
+		}
+		
+		textArea.append("\n" + (schedulingFailed ? "Scheduling Failed" : "Scheduling Succeeded"));
 		
 		// Populate the graph with task instances
 		for(String task : taskMap.keySet()) {
