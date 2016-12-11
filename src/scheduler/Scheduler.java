@@ -70,9 +70,12 @@ public class Scheduler {
 		// The total length of the schedule
 		long lcm = Math.max(SchedulerUtils.lcm(periods), curTime) - 1;
 		
+		
+		double[] taskMQR = new double[tasks.size()];
+		
 		for(int i = 0; i < tasks.size(); i++) {
 			taskMap.put(tasks.get(i).getName(), SchedulerUtils.createTask(tasks.get(i).getName(), 1, (int)lcm));
-			periods[i] = 0;
+			taskMQR[i] = 0.0;
 		}
 		
 		curTime = 0;
@@ -102,6 +105,7 @@ public class Scheduler {
 					if(taskInstance.doComputation(curTime, curTime + 1)) {
 						curTimeUsed = true;
 						curTime++;
+						taskMQR[tasks.indexOf(taskInstance.getParent())] += 1.0 / taskInstance.getParent().getC();
 					}
 					
 					// Task instance is about to finish
@@ -110,7 +114,6 @@ public class Scheduler {
 						task.setPercentComplete(curTaskInstance.isMandatory() ? 1.0 : 0.0);
 						taskMap.get(curTaskInstance.getParent().getName()).addSubtask(task);
 						taskInstances.set(i, new TaskInstance(taskInstance.getParent(), taskInstance.getA() + 1, taskInstance.getA2(), i, taskInstances.size(), (taskInstance.getA() + 1) * taskInstance.getParent().getP()));
-						periods[tasks.indexOf(taskInstance.getParent())]++;
 						curTaskInstance = null;
 					}
 				}
@@ -135,10 +138,10 @@ public class Scheduler {
 			double m = k * ((double)task.getM() / task.getK());
 			
 			if(task.getM() != task.getK()) {
-				avgMQR.add(((double)periods[i] - m) / (k - m));
+				avgMQR.add((taskMQR[i] - m) / (k - m));
 			}
 			
-			textArea.append(task.getName() + " MQR: (" + (double)periods[i] + " - " + m + ") / (" + k + " - " + m + ") = " + (task.getM() == task.getK() ? 0.0 : ((double)periods[i] - m) / (k - m)) + "\n");
+			textArea.append(task.getName() + " MQR: (" + taskMQR[i] + " - " + m + ") / (" + k + " - " + m + ") = " + (task.getM() == task.getK() ? 0.0 : (taskMQR[i] - m) / (k - m)) + "\n");
 		}
 		
 		double mqr = 0.0;
